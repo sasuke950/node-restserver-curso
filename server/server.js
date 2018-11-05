@@ -1,14 +1,15 @@
-require('/Users/Admin/Documents/NodeJs/07-restserver/config/config');
-
 const express = require('express');
 const app = express();
 const bodyParser = require('body-parser');
+const port = process.env.PORT || 3000;
 
 app.use(bodyParser.urlencoded({ extended: false }))
 
-app.use(bodyParser.json());
+app.use(bodyParser.json())
 
-app.get('/usuario', (req, res) => res.json('Get Usuario'));
+app.get('/usuario', function(req, res) {
+    res.json('get Usuario');
+});
 
 app.post('/usuario', (req, res) => {
 
@@ -39,4 +40,4 @@ app.put('/usuario/:id', (req, res) => {
 app.delete('/usuario', (req, res) => res.send('Delete Usuario'));
 
 
-app.listen(process.env.PORT, () => console.log(`Escuchando desde el puerto ${process.env.PORT}`));
+app.listen(port, () => console.log(`Escuchando desde el puerto ${port}`));
