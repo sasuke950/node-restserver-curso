@@ -5,10 +5,10 @@ const bcrypt = require('bcrypt');
 const _ = require('underscore');
 
 const Usuario = require('../models/usuario');
-
+const { verificaToken, verificaAdminRole } = require('../server/middlewares/authentication');
 const app = express();
 
-app.get('/usuario', (req, res) => {
+app.get('/usuario', verificaToken, (req, res) => {
 
     let desde = req.query.desde || 0;
     desde = Number(desde);
@@ -38,7 +38,7 @@ app.get('/usuario', (req, res) => {
 });
 
 
-app.post('/usuario', (req, res) => {
+app.post('/usuario', [verificaToken, verificaAdminRole], (req, res) => {
 
     let body = req.body;
 
@@ -51,9 +51,11 @@ app.post('/usuario', (req, res) => {
 
     usuario.save((err, usuarioDB) => {
         if (err) {
-            res.status(400).json({
+            return res.status(400).json({
                 ok: false,
-                err
+                err: {
+                    message: 'Error al guardar'
+                }
             });
         }
 
@@ -65,7 +67,7 @@ app.post('/usuario', (req, res) => {
 
 });
 
-app.put('/usuario/:id', (req, res) => {
+app.put('/usuario/:id', verificaToken, (req, res) => {
 
     let id = req.params.id;
     let body = _.pick(req.body, ['nombre', 'email', 'img', 'role', 'estado']);
@@ -86,7 +88,7 @@ app.put('/usuario/:id', (req, res) => {
 
 });
 
-app.delete('/usuario/:id', (req, res) => {
+app.delete('/usuario/:id', [verificaToken, verificaAdminRole], (req, res) => {
 
     let id = req.params.id;
 
